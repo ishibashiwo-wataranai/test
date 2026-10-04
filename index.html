@@ -81,7 +81,7 @@
     </section>
 
     <section class="card">
-      <h2>現在時刻</h2>
+      <h2>現在時刻（日本時間）</h2>
       <p id="clock">--:--:--</p>
     </section>
 
@@ -95,7 +95,15 @@
     document.getElementById("minus").addEventListener("click", () => { countEl.textContent = --count; });
 
     const clockEl = document.getElementById("clock");
-    const tick = () => { clockEl.textContent = new Date().toLocaleTimeString("ja-JP"); };
+    const clockFormat = new Intl.DateTimeFormat("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric", month: "long", day: "numeric", weekday: "short",
+      hour: "numeric", minute: "2-digit", second: "2-digit"
+    });
+    const tick = () => {
+      const p = Object.fromEntries(clockFormat.formatToParts(new Date()).map(({ type, value }) => [type, value]));
+      clockEl.textContent = `${p.year}年${p.month}月${p.day}日（${p.weekday}） ${p.hour}時${p.minute}分${p.second}秒`;
+    };
     tick();
     setInterval(tick, 1000);
 
